@@ -1,0 +1,21 @@
+name = "clnch-worker"
+main = "src/index.ts"
+compatibility_date = "2024-01-15"
+
+# Environment configuration
+[env.production]
+name = "clnch-worker-prod"
+
+[env.development]
+name = "clnch-worker-dev"
+
+# Secrets (set via CLI: wrangler secret put KEY)
+# wrangler secret put ANTHROPIC_API_KEY
+# wrangler secret put ELEVENLABS_API_KEY
+# wrangler secret put ELEVENLABS_VOICE_ID
+# wrangler secret put ASSEMBLYAI_API_KEY
+# wrangler secret put FIRECRAWL_API_KEY (optional)
+
+# Build configuration
+[build]
+command = "npm run build"

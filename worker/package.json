@@ -1,0 +1,23 @@
+{
+  "name": "clnch-worker",
+  "version": "1.0.0",
+  "description": "Cloudflare Worker for CLNCH - AI Coach Extension",
+  "main": "src/index.ts",
+  "type": "module",
+  "scripts": {
+    "dev": "wrangler dev",
+    "deploy": "wrangler deploy",
+    "build": "wrangler publish --dry-run",
+    "type-check": "tsc --noEmit",
+    "format": "prettier --write 'src/**/*.ts'"
+  },
+  "dependencies": {
+    "itty-router": "^4.1.2"
+  },
+  "devDependencies": {
+    "@cloudflare/workers-types": "^4.20250102.0",
+    "prettier": "^3.2.4",
+    "typescript": "^5.3.3",
+    "wrangler": "^3.26.0"
+  }
+}
