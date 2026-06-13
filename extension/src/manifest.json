@@ -1,0 +1,32 @@
+{
+  "manifest_version": 3,
+  "name": "CLNCH - AI Coach",
+  "version": "1.0.0",
+  "description": "An AI coach to help you refine your application answers in real-time",
+  "permissions": ["storage", "scripting"],
+  "host_permissions": ["<all_urls>"],
+  "action": {
+    "default_popup": "src/popup/index.html",
+    "default_title": "CLNCH Coach",
+    "default_icon": {
+      "16": "public/icon-16.png",
+      "48": "public/icon-48.png",
+      "128": "public/icon-128.png"
+    }
+  },
+  "icons": {
+    "16": "public/icon-16.png",
+    "48": "public/icon-48.png",
+    "128": "public/icon-128.png"
+  },
+  "background": {
+    "service_worker": "background.js"
+  },
+  "content_scripts": [
+    {
+      "matches": ["<all_urls>"],
+      "js": ["content.js"],
+      "run_at": "document_end"
+    }
+  ]
+}
