@@ -1,5 +1,5 @@
 /**
- * Hook for managing coaching logic
+ * Hook for managing coaching logic with TTS support
  */
 
 import { useState, useCallback } from 'react';
@@ -12,6 +12,7 @@ export interface UseCoachResult {
   isCoaching: boolean;
   messages: ChatMessage[];
   refineAnswer: (rawInput: string, fieldLabel?: string) => Promise<RefineAnswerResult | null>;
+  synthesizeSpeech: (text: string) => Promise<ArrayBuffer>;
   playAudio: (audioData: ArrayBuffer) => Promise<void>;
   error: string | null;
   clearMessages: () => void;
@@ -31,21 +32,18 @@ export function useCoach(workerUrl: string, model: 'sonnet' | 'opus' = 'sonnet')
         setError(null);
         setIsCoaching(true);
 
-        // Add user message to history
         const userMessage: ChatMessage = {
           role: 'user',
           content: rawInput,
         };
         setMessages((prev) => [...prev, userMessage]);
 
-        // Get refined answer
         const result = await client.refineAnswer({
           rawInput,
           fieldLabel,
           conversationHistory: messages,
         });
 
-        // Add assistant message to history
         const assistantMessage: ChatMessage = {
           role: 'assistant',
           content: result.refined,
@@ -66,6 +64,15 @@ export function useCoach(workerUrl: string, model: 'sonnet' | 'opus' = 'sonnet')
     },
     [messages]
   );
+
+  const synthesizeSpeech = useCallback(async (text: string): Promise<ArrayBuffer> => {
+    try {
+      return await client.synthesizeSpeech(text);
+    } catch (err) {
+      logger.error('Failed to synthesize speech', err);
+      throw err;
+    }
+  }, []);
 
   const playAudio = useCallback(async (audioData: ArrayBuffer) => {
     try {
@@ -92,6 +99,7 @@ export function useCoach(workerUrl: string, model: 'sonnet' | 'opus' = 'sonnet')
     isCoaching,
     messages,
     refineAnswer,
+    synthesizeSpeech,
     playAudio,
     error,
     clearMessages,

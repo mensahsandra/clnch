@@ -1,9 +1,8 @@
 /**
- * Reusable Coach Client Library
- * Can be used in extension, web app, or other integrations
+ * Coach API client with TTS support
  */
 
-import { ChatMessage, FormContext } from './types';
+import { ChatMessage, FormContext } from '../types';
 
 export interface CoachClientConfig {
   workerUrl: string;
@@ -20,30 +19,26 @@ export interface RefineAnswerOptions {
 export interface RefineAnswerResult {
   refined: string;
   suggestions?: string[];
-  audioUrl?: string;
 }
 
-const COACHING_SYSTEM_PROMPT = `You are CLNCH, an expert career coach helping candidates refine their application answers.
+const COACHING_SYSTEM_PROMPT = `You are CLNCH, an expert career coach helping candidates refine their application answers in real-time.
 
 Your role:
 - Take raw, unpolished thoughts from the user
 - Transform them into compelling, concise answers
 - Make answers specific and actionable
 - Keep them professional but authentic
-- Suggest how to back up claims with examples
+- Provide immediately usable text
 
 Guidelines:
 - Keep answers concise (2-3 sentences max for forms)
 - Use active voice and strong verbs
 - Highlight unique value and fit
 - Avoid generic corporate speak
-- Make it memorable
+- Make it memorable and specific
+- Format as plain text, ready to paste
 
-Format your response as JSON:
-{
-  "refined": "The polished answer",
-  "suggestions": ["Optional suggestion 1", "Optional suggestion 2"]
-}`;
+Respond with ONLY the refined answer - no markdown, no formatting, just the polished text the user can copy and paste.`;
 
 export class CoachClient {
   private config: CoachClientConfig;
@@ -58,9 +53,6 @@ export class CoachClient {
     };
   }
 
-  /**
-   * Refine a user's answer using Claude
-   */
   async refineAnswer(options: RefineAnswerOptions): Promise<RefineAnswerResult> {
     const messages: ChatMessage[] = [
       ...(options.conversationHistory || []),
@@ -94,28 +86,15 @@ export class CoachClient {
       };
       const textContent = data.content[0]?.text || '';
 
-      // Try to parse as JSON response
-      try {
-        const parsed = JSON.parse(textContent);
-        return {
-          refined: parsed.refined || textContent,
-          suggestions: parsed.suggestions || [],
-        };
-      } catch {
-        // If not JSON, return the raw text
-        return {
-          refined: textContent,
-          suggestions: [],
-        };
-      }
+      return {
+        refined: textContent.trim(),
+        suggestions: [],
+      };
     } catch (error) {
       throw new Error(`Failed to refine answer: ${error instanceof Error ? error.message : 'Unknown error'}`);
     }
   }
 
-  /**
-   * Convert refined text to speech
-   */
   async synthesizeSpeech(text: string): Promise<ArrayBuffer> {
     try {
       const response = await fetch(`${this.config.workerUrl}/tts`, {
@@ -140,9 +119,6 @@ export class CoachClient {
     }
   }
 
-  /**
-   * Get AssemblyAI streaming token
-   */
   async getTranscriptionToken(expiresInSeconds = 60): Promise<string> {
     try {
       const response = await fetch(`${this.config.workerUrl}/transcribe-token?expires_in_seconds=${expiresInSeconds}`, {
@@ -163,9 +139,6 @@ export class CoachClient {
     }
   }
 
-  /**
-   * Extract page context using Firecrawl
-   */
   async extractPageContext(url: string): Promise<FormContext> {
     try {
       const response = await fetch(`${this.config.workerUrl}/extract-context`, {
@@ -177,7 +150,6 @@ export class CoachClient {
       });
 
       if (!response.ok) {
-        // If extraction fails, return empty context
         return { url };
       }
 
@@ -189,7 +161,7 @@ export class CoachClient {
       return {
         url,
         pageTitle: data.title,
-        jobDescription: data.content.substring(0, 500), // Truncate for context window
+        jobDescription: data.content.substring(0, 500),
       };
     } catch (error) {
       console.warn('Failed to extract page context:', error);
@@ -197,18 +169,15 @@ export class CoachClient {
     }
   }
 
-  /**
-   * Build the user prompt with context
-   */
   private buildUserPrompt(options: RefineAnswerOptions): string {
-    let prompt = `Help me refine this answer:\n\n"${options.rawInput}"`;
+    let prompt = `Help me refine this answer for my application:\n\n"${options.rawInput}"`;
 
     if (options.fieldLabel) {
       prompt += `\n\nQuestion: ${options.fieldLabel}`;
     }
 
     if (options.context?.jobDescription) {
-      prompt += `\n\nContext: ${options.context.jobDescription}`;
+      prompt += `\n\nJob/Application Context: ${options.context.jobDescription.substring(0, 300)}`;
     }
 
     return prompt;
