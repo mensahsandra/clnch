@@ -85,7 +85,7 @@ export function CoachingPanel({
       if (result && autoPlayEnabled) {
         try {
           // Synthesize and play audio
-          const audioData = await coach.synthesizeSpeech?.(result.refined);
+          const audioData = await coach.synthesizeSpeech(result.refined);
           if (audioData) {
             await coach.playAudio(audioData);
           }
