@@ -1,1 +1,30 @@
-{\n  \"manifest_version\": 3,\n  \"name\": \"CLNCH - AI Coach\",\n  \"version\": \"1.0.0\",\n  \"description\": \"Real-time AI coaching for your applications. Refine your answers as you type.\",\n  \"permissions\": [\n    \"storage\",\n    \"scripting\",\n    \"activeTab\",\n    \"webRequest\"\n  ],\n  \"host_permissions\": [\n    \"<all_urls>\"\n  ],\n  \"action\": {\n    \"default_popup\": \"src/popup/index.html\",\n    \"default_title\": \"CLNCH Coach\"\n  },\n  \"background\": {\n    \"service_worker\": \"src/background.js\"\n  },\n  \"content_scripts\": [\n    {\n      \"matches\": [\"<all_urls>\"],\n      \"js\": [\"src/content.js\"],\n      \"run_at\": \"document_end\",\n      \"all_frames\": false\n    }\n  ]\n}\n
+{
+  "manifest_version": 3,
+  "name": "CLNCH - AI Coach",
+  "version": "1.0.0",
+  "description": "Real-time AI coaching for your applications. Refine your answers as you type.",
+  "permissions": [
+    "storage",
+    "scripting",
+    "activeTab",
+    "webRequest"
+  ],
+  "host_permissions": [
+    "<all_urls>"
+  ],
+  "action": {
+    "default_popup": "src/popup/index.html",
+    "default_title": "CLNCH Coach"
+  },
+  "background": {
+    "service_worker": "src/background.js"
+  },
+  "content_scripts": [
+    {
+      "matches": ["<all_urls>"],
+      "js": ["src/content.js"],
+      "run_at": "document_end",
+      "all_frames": false
+    }
+  ]
+}
