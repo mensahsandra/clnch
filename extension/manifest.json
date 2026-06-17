@@ -1,0 +1,40 @@
+{
+  "manifest_version": 3,
+  "name": "CLNCH - AI Coach",
+  "version": "1.0.0",
+  "description": "Real-time AI coaching for your applications. Refine your answers as you type.",
+  "permissions": [
+    "storage",
+    "scripting",
+    "activeTab",
+    "webRequest"
+  ],
+  "host_permissions": [
+    "<all_urls>"
+  ],
+  "action": {
+    "default_popup": "src/popup/index.html",
+    "default_title": "CLNCH Coach",
+    "default_icon": {
+      "16": "public/icons/icon-16.png",
+      "48": "public/icons/icon-48.png",
+      "128": "public/icons/icon-128.png"
+    }
+  },
+  "icons": {
+    "16": "public/icons/icon-16.png",
+    "48": "public/icons/icon-48.png",
+    "128": "public/icons/icon-128.png"
+  },
+  "background": {
+    "service_worker": "src/background.js"
+  },
+  "content_scripts": [
+    {
+      "matches": ["<all_urls>"],
+      "js": ["src/content.js"],
+      "run_at": "document_end",
+      "all_frames": false
+    }
+  ]
+}

@@ -1,12 +1,68 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>CLNCH Coach</title>
-    <script type="module" src="../index.tsx"></script>
-  </head>
-  <body>
-    <div id="clnch-root"></div>
-  </body>
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>CLNCH Coach</title>
+  <link rel="stylesheet" href="../popup.css">
+</head>
+<body>
+  <div id="popup-root" class="popup-container">
+    <!-- Loading State -->
+    <div id="login-screen" class="screen active">
+      <div class="auth-header">
+        <h1>🎙️ CLNCH</h1>
+        <p>AI Coach for Your Applications</p>
+      </div>
+
+      <div class="auth-content">
+        <p class="subtitle">Sign in to save your coaching history</p>
+
+        <div class="button-group">
+          <button id="google-login" class="auth-btn google-btn">
+            <span>🔵</span> Sign in with Google
+          </button>
+          <button id="github-login" class="auth-btn github-btn">
+            <span>⚫</span> Sign in with GitHub
+          </button>
+        </div>
+
+        <div class="divider">
+          <span>or</span>
+        </div>
+
+        <button id="guest-btn" class="auth-btn guest-btn">
+          Continue as Guest
+        </button>
+      </div>
+
+      <div class="auth-footer">
+        <p>Your conversations are saved securely</p>
+      </div>
+    </div>
+
+    <!-- Coaching Screen -->
+    <div id="coaching-screen" class="screen">
+      <div class="coaching-header">
+        <div class="user-info" id="user-info"></div>
+        <button id="logout-btn" class="logout-btn">⏻️</button>
+      </div>
+
+      <div class="coaching-content">
+        <div id="chat-container" class="chat-container"></div>
+        <div id="context-panel" class="context-panel"></div>
+      </div>
+
+      <div class="coaching-input">
+        <textarea id="user-input" placeholder="Type your raw thoughts or click 🎤 to speak..." class="input-field"></textarea>
+        <div class="input-actions">
+          <button id="voice-btn" class="action-btn voice-btn">🎤 Voice</button>
+          <button id="submit-btn" class="action-btn submit-btn" disabled>✨ Refine</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="../popup.js"></script>
+</body>
 </html>
